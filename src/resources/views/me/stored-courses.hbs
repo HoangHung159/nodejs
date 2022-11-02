@@ -19,10 +19,51 @@
                 <td>{{this.createdAt}}</td>
                 <td>
                     <a href="/courses/{{this._id}}/edit" class="btn btn-primary">Sua</a>
-                    <a href="" class="btn btn-primary">xoa</a>
+                    <a href="" class="btn btn-primary" data-id="{{this._id}}" data-bs-toggle="modal" data-bs-target="#delete-course-modal">xoa</a>
                 </td>
             </tr>   
             {{/each}}      
         </tbody>
     </table>
 </div>
+
+{{!-- confirm delete --}}
+<div id="delete-course-modal" class="modal" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Xoa khoa hoc?</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <p>Ban chac chan muon xoa khoa hoc nay?</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Huy</button>
+        <button id="btn-delete-course" type="button" class="btn btn-danger">xoa bo</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{{!-- delete hiddenform --}}
+<form name="delete-course-form" method="POST"></form>
+
+<script>
+  var deleteCourseModal = document.getElementById('delete-course-modal')
+  var deleteForm = document.forms['delete-course-form']
+
+  deleteCourseModal.addEventListener('show.bs.modal', event => {
+  var button = event.relatedTarget
+  var courseId = button.getAttribute('data-id')
+
+  var btnDeleteCourse = document.getElementById('btn-delete-course')
+
+  // when delete btn click
+  btnDeleteCourse.onclick = function () {
+    deleteForm.action = '/courses/' + courseId + '?_method=DELETE'
+    deleteForm.submit()
+  }
+
+  })
+</script>
