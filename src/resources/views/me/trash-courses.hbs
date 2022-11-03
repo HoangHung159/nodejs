@@ -1,7 +1,7 @@
 <div class="div">
     <div>
-      <h3>khoa hoc cua toi</h3>
-      <a href="/me/trash/courses">thung rac</a>
+      <h3>khoa hoc da xoa</h3>
+      <a href="/me/stored/courses">danh sach khoa hoc</a>
     </div>
 
 
@@ -22,16 +22,16 @@
                 <td>{{this.level}}</td>
                 <td>{{this.createdAt}}</td>
                 <td>
-                    <a href="/courses/{{this._id}}/edit" class="btn btn-primary">Sua</a>
-                    <a href="" class="btn btn-primary" data-id="{{this._id}}" data-bs-toggle="modal" data-bs-target="#delete-course-modal">xoa</a>
+                    <a class="btn btn-primary btn-restore" data-id="{{this._id}}">khoi phuc</a>
+                    <a href="" class="btn btn-primary" data-id="{{this._id}}" data-bs-toggle="modal" data-bs-target="#delete-course-modal">xoa vinh vien</a>
                 </td>
             </tr>   
 
             {{else}}
             <tr>
               <td colspan="5" class="text-center">
-                ban chua dang khoa hoc nao.
-                <a href="/courses/create">Dang khoa hoc</a>
+                thung rac trong
+                <a href="/me/stored/courses">Dang khoa hoc</a>
               </td>
             </tr>
             {{/each}}      
@@ -48,22 +48,36 @@
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
-        <p>Ban chac chan muon xoa khoa hoc nay?</p>
+        <p>Hanh dong nay khong the khoi phuc!</p>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Huy</button>
-        <button id="btn-delete-course" type="button" class="btn btn-danger">xoa bo</button>
+        <button id="btn-delete-course" type="button" class="btn btn-danger">xoa vinh vien</button>
       </div>
     </div>
   </div>
 </div>
 
-{{!-- delete hiddenform --}}
+
 <form name="delete-course-form" method="POST"></form>
+<form name="restore-course-form" method="POST"></form>
 
 <script>
   var deleteCourseModal = document.getElementById('delete-course-modal')
   var deleteForm = document.forms['delete-course-form']
+  var restoreForm = document.forms['restore-course-form']
+
+  var restoreBtnAll = document.querySelectorAll('.btn-restore');
+   restoreBtnAll.forEach((restoreBtn) => {
+        restoreBtn.addEventListener('click', (e) => {
+            e.preventDefault();
+
+            var courseId = restoreBtn.getAttribute('data-id');
+            restoreForm.action = '/courses/' + courseId + '/restore?_method=PATCH';
+            restoreForm.submit();
+        });
+    });
+
 
   deleteCourseModal.addEventListener('show.bs.modal', event => {
   var button = event.relatedTarget
@@ -73,7 +87,7 @@
 
   // when delete btn click
   btnDeleteCourse.onclick = function () {
-    deleteForm.action = '/courses/' + courseId + '?_method=DELETE'
+    deleteForm.action = '/courses/' + courseId + '/force?_method=DELETE'
     deleteForm.submit()
   }
 
